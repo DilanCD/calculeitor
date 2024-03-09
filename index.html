@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculadora de Devolución en Dólares y Bolívares</title>
+</head>
+<body>
+    <h2>Calculadora de Devolución en Dólares y Bolívares</h2>
+    <label for="dolaresRecibidos">Dólares recibidos:</label>
+    <input type="number" id="dolaresRecibidos" step="any" value="0" /><br><br>
+    
+    <label for="bolivaresPagados">Bolívares a pagar:</label>
+    <input type="number" id="bolivaresPagados" step="any" value="0" /><br><br>
+    
+    <label for="tasaCambio">Tasa de cambio ($/Bs):</label>
+    <input type="number" id="tasaCambio" step="any" value="36.17" /><br><br>
+
+    <button onclick="calcularDevolucion()">Calcular Devolución</button><br><br>
+    
+    <div id="resultado"></div>
+    
+    <div id="conversionDecimal"></div>
+
+    <script>
+        function calcularDevolucion() {
+            var dolaresRecibidos = parseFloat(document.getElementById('dolaresRecibidos').value);
+            var bolivaresPagados = parseFloat(document.getElementById('bolivaresPagados').value);
+            var tasaCambio = parseFloat(document.getElementById('tasaCambio').value);
+            
+            var bolivaresDevolver = dolaresRecibidos * tasaCambio - bolivaresPagados;
+            var dolaresDevolver = bolivaresDevolver / tasaCambio;
+            
+            var decimalDolaresDevolver = ((dolaresDevolver * 100) % 100) / 100; // Obtener el decimal de los dólares a devolver
+            var equivalenteEnBolivares = decimalDolaresDevolver * tasaCambio;
+
+            var mensaje = bolivaresDevolver >= 0 ? "Debes devolver" : "Me debe";
+
+            document.getElementById('resultado').innerHTML = `
+            ${mensaje} ${Math.abs(bolivaresDevolver).toFixed(2)} Bs o ${Math.abs(dolaresDevolver).toFixed(2)} $ al cliente.
+            `;
+            
+            if (decimalDolaresDevolver > 0) {
+                document.getElementById('conversionDecimal').innerHTML = `
+                El decimal de ${decimalDolaresDevolver.toFixed(2)} $ equivale a ${equivalenteEnBolivares.toFixed(2)} Bs.
+                `;
+            } else {
+                document.getElementById('conversionDecimal').innerHTML = ``;
+            }
+        }
+    </script>
+</body>
+</html>
