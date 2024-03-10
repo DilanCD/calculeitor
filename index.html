@@ -2,25 +2,93 @@
 <html>
 <head>
     <title>Calculadora de Devolución en Dólares y Bolívares</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #calculator {
+            max-width: 300px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px; /* Añadido margen superior */
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #resultado {
+            margin-top: 20px;
+        }
+        #conversionDecimal {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Calculadora de Devolución en Dólares y Bolívares</h2>
-    <label for="dolaresRecibidos">Dólares recibidos:</label>
-    <input type="number" id="dolaresRecibidos" step="any" value="0" /><br><br>
-    
-    <label for="bolivaresPagados">Bolívares a pagar:</label>
-    <input type="number" id="bolivaresPagados" step="any" value="0" /><br><br>
-    
-    <label for="tasaCambio">Tasa de cambio ($/Bs):</label>
-    <input type="number" id="tasaCambio" step="any" value="36.17" /><br><br>
+    <div id="calculator">
+        <h2>Calculadora de Devolución</h2>
+        <label for="dolaresRecibidos">Dólares recibidos:</label>
+        <input type="number" id="dolaresRecibidos" step="any" value="0" />
+        
+        <label for="bolivaresPagados">Bolívares a pagar:</label>
+        <input type="number" id="bolivaresPagados" step="any" value="0" />
+        
+        <label for="tasaCambio">Tasa de cambio ($/Bs):</label>
+        <input type="number" id="tasaCambio" step="any" value="36.17" />
 
-    <button onclick="calcularDevolucion()">Calcular Devolución</button><br><br>
-    
-    <div id="resultado"></div>
-    
-    <div id="conversionDecimal"></div>
+        <button id="toggleModeButton" onclick="toggleMode()">Claro | Oscuro</button>
+        <button onclick="calcularDevolucion()">Calcular Devolución</button>
+        
+        <div id="resultado"></div>
+        
+        <div id="conversionDecimal"></div>
+    </div>
 
     <script>
+        let isDarkMode = false;
+
+        function toggleMode() {
+            isDarkMode = !isDarkMode;
+            const body = document.body;
+            const calculator = document.getElementById('calculator');
+
+            if (isDarkMode) {
+                body.style.backgroundColor = '#1a1a1a';
+                body.style.color = '#fff';
+                calculator.style.backgroundColor = '#333';
+            } else {
+                body.style.backgroundColor = '#f0f0f0';
+                body.style.color = '#000';
+                calculator.style.backgroundColor = '#fff';
+            }
+        }
+
         function calcularDevolucion() {
             var dolaresRecibidos = parseFloat(document.getElementById('dolaresRecibidos').value);
             var bolivaresPagados = parseFloat(document.getElementById('bolivaresPagados').value);
@@ -29,18 +97,18 @@
             var bolivaresDevolver = dolaresRecibidos * tasaCambio - bolivaresPagados;
             var dolaresDevolver = bolivaresDevolver / tasaCambio;
             
-            var decimalDolaresDevolver = ((dolaresDevolver * 100) % 100) / 100; // Obtener el decimal de los dólares a devolver
+            var decimalDolaresDevolver = ((dolaresDevolver * 100) % 100) / 100;
             var equivalenteEnBolivares = decimalDolaresDevolver * tasaCambio;
-
-            var mensaje = bolivaresDevolver >= 0 ? "Debes devolver" : "Me debe";
+            
+            var mensaje = bolivaresDevolver >= 0 ? "Debes devolver" : "Te debe";
 
             document.getElementById('resultado').innerHTML = `
-            ${mensaje} ${Math.abs(bolivaresDevolver).toFixed(2)} Bs o ${Math.abs(dolaresDevolver).toFixed(2)} $ al cliente.
+            ${mensaje} ${Math.abs(bolivaresDevolver).toFixed(2)}Bs o ${Math.abs(dolaresDevolver).toFixed(2)}$
             `;
             
-            if (decimalDolaresDevolver > 0) {
+            if (Math.abs(dolaresDevolver) % 1 !== 0) {
                 document.getElementById('conversionDecimal').innerHTML = `
-                El decimal de ${decimalDolaresDevolver.toFixed(2)} $ equivale a ${equivalenteEnBolivares.toFixed(2)} Bs.
+                El decimal ${Math.abs(dolaresDevolver % 1).toFixed(2)}$ equivale a ${Math.abs(equivalenteEnBolivares).toFixed(2)}Bs
                 `;
             } else {
                 document.getElementById('conversionDecimal').innerHTML = ``;
